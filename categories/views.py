@@ -13,7 +13,7 @@ def site(request):
         form.save()
         return redirect('site')  
 
-    return render(request, 'categories/site.html', {
+    return render(request, 'Categories/site.html', {
         'categories': categories,
         'form': form
     })
@@ -40,7 +40,7 @@ def delete_site(request, site_id):
     site.delete()
     return redirect('site')
 
-#اجازات الموظفين الرسمية
+#اجازات الموظفين 
 @role_required('manager')
 def holiday(request):
     official_holidays = Official_holiday.objects.all()
