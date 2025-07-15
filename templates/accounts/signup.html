@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}تسجيل حساب جديد{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock %}
+
+{% block content %}
+  <div class="login-container">
+    <h2>إنشاء حساب جديد</h2>
+
+    <!-- عرض الرسائل -->
+    {% if messages %}
+      <ul class="messages">
+        {% for message in messages %}
+          <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+      <input type="text" name="first_name" placeholder="الاسم الأول" required>
+      <input type="text" name="last_name" placeholder="الاسم الثاني" required>
+      <input type="text" name="username" placeholder="اسم المستخدم" required>
+      <input type="email" name="email" placeholder="البريد الإلكتروني" required>
+      <input type="password" name="password" placeholder="كلمة المرور" required>
+      <input type="password" name="confirm" placeholder="تأكيد كلمة المرور" required>
+
+      <label for="job_title">الوظيفه:</label>
+      <select name="job_title" placeholder="job_title" required>
+        <option value="" disabled selected>اختر الوظيفه</option>
+        <option value="كاتب محتوي">كاتب محتوي</option>
+        <option value="مبرمج">مبرمج</option>
+        <option value="مصمم">مصمم</option>
+      </select>
+
+      <label for="role">نوع المستخدم:</label>
+      <select name="role" id="role" required>
+        <option value="" disabled selected>اختر النوع</option>
+        <option value="employee">موظف</option>
+        <option value="manager">مدير</option>
+      </select>
+
+      <button type="submit">إنشاء الحساب</button>
+    </form>
+  </div>
+{% endblock %}

@@ -1,0 +1,142 @@
+/* إعدادات عامة */
+body {
+  font-family: 'Cairo', sans-serif;
+  direction: rtl;
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+.page-title {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* رسائل التنبيه */
+.alert {
+  padding: 10px;
+  margin: 15px 0;
+  border: 1px solid #f5c6cb;
+  background-color: #f8d7da;
+  color: #721c24;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+/* تنسيق الإشعارات */
+.notifications-box {
+  background-color: #fffbe6;
+  border: 1px solid #ffe58f;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 6px;
+}
+
+.notification-title {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.notification-item {
+  border-bottom: 1px solid #f0f0f0;
+  padding: 10px 0;
+}
+
+.notification-item.unread {
+  background-color: #fff5cc;
+}
+
+.notification-actions button {
+  margin-right: 5px;
+  padding: 6px 8px;
+  font-size: 13px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.notification-actions button:hover {
+  background-color: #0056b3;
+}
+
+/* تنسيق الجدول */
+.task-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background-color: white;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+  font-size: 14px;
+}
+
+.task-table thead {
+  background-color: #f0f0f0;
+}
+
+.task-table th,
+.task-table td {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  text-align: right;
+  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.task-table tbody tr:nth-child(even) {
+  background-color: #fcfcfc;
+}
+
+.task-table tbody tr:hover {
+  background-color: #f1f9ff;
+  transition: background-color 0.3s ease;
+}
+
+/* فورم داخل الجدول */
+.task-table td form {
+  white-space: normal;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 140px;
+}
+
+/* حقل الرابط */
+input[type="url"] {
+  width: 100%;
+  padding: 6px 8px;
+  font-size: 13px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  direction: ltr;
+}
+
+/* زر الحفظ */
+button {
+  background-color: #007bff;
+  color: white;
+  padding: 6px;
+  border: none;
+  font-size: 13px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 5px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* منسق الحالة */
+select {
+  min-width: 120px;
+  padding: 6px;
+  border-radius: 4px;
+  font-size: 13px;
+}

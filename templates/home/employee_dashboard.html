@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}لوحة تحكم الموظف{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/employee_dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+  <h1>👋 مرحبًا {{ request.user.get_full_name|default:request.user.username }}</h1>
+  <p>هذه لمحة سريعة عن أدائك والمهام المطلوبة اليوم</p>
+
+  <div class="stats">
+    <div class="stat-box">
+      <h2>{{ total_tasks }}</h2>
+      <p>مهام اليوم</p>
+    </div>
+    <div class="stat-box">
+      <h2>{{ completed_tasks }}</h2>
+      <p>المهام المكتملة</p>
+    </div>
+    <div class="stat-box">
+      <h2>{{ pending_tasks }}</h2>
+      <p>المهام المتبقية</p>
+    </div>
+    <div class="stat-box">
+      <h2>{{ completed_publish }}</h2>
+      <p>المهام المنشورة</p>
+    </div>
+    <div class="stat-box">
+      <h2>{{ progress_percent }}%</h2>
+      <p>نسبة الإنجاز</p>
+    </div>
+  </div>
+
+  <h2>📅 المهام المطلوبة اليوم</h2>
+  {% if todays_tasks %}
+    <table class="task-table">
+      <thead>
+        <tr>
+          <th>عنوان المقال</th>
+          <th>[النوع]</th>
+          <th>التفاصيل</th>
+          <th>رابط المقال</th>
+          <th>موقع النشر</th>
+          <th>تاريخ النشر</th>
+          <th>الحالة</th>
+          <th>عرض المزيد</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for task in todays_tasks %}
+          <tr>
+            <td>{{ task.article_title }}</td>
+            <td>{{ task.article_type_W_R_A_B }}</td>
+            <td>{{ task.article_details }}</td>
+            <td>
+              <form method="post" action="{% url 'update_article_link' task.id %}">
+                {% csrf_token %}
+                <input type="url" name="article_link" value="{{ task.article_link }}" placeholder="أدخل الرابط" required>
+                <button type="submit">💾 حفظ</button>
+              </form>
+            </td>
+            <td>{{ task.publish_site }}</td>
+            <td>{{ task.publish_date|date:"Y-m-d" }}</td>
+            <td>
+              <form method="post" action="{% url 'update_task_status' task.id %}">{% csrf_token %}
+                <select name="status">
+                  <option value="in_progress" {% if task.status == 'in_progress' %}selected{% endif %}>⏳ جاري العمل</option>
+                  <option value="upload" {% if task.status == 'upload' %}selected{% endif %}>📤 تم الرفع</option>
+                  <option value="publish" {% if task.status == 'publish' %}selected{% endif %}>📢 تم النشر</option>
+                  <option value="done" {% if task.status == 'done' %}selected{% endif %}>✅ مكتملة</option>
+                </select>
+                <button type="submit">💾 حفظ</button>
+              </form>
+            </td>
+            <td>
+              <a href="{% url 'task_details' task.id %}" target="_blank">👁️ عرض</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>🎉 لا توجد مهام مجدولة اليوم! استمتع بوقتك 🎈</p>
+  {% endif %}
+
+  <h2 style="margin-top: 40px;">⚠️ المهام المؤخرة</h2>
+  {% if overdue_tasks %}
+    <table class="task-table">
+      <thead>
+        <tr>
+          <th>عنوان المقال</th>
+          <th>[النوع]</th>
+          <th>التفاصيل</th>
+          <th>رابط المقال</th>
+          <th>موقع النشر</th>
+          <th>تاريخ النشر</th>
+          <th>الحالة</th>
+          <th>عرض المزيد</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for task in overdue_tasks %}
+          <tr>
+            <td>{{ task.article_title }}</td>
+            <td>{{ task.article_type_W_R_A_B }}</td>
+            <td>{{ task.article_details }}</td>
+            <td>
+              <form method="post" action="{% url 'update_article_link' task.id %}">
+                {% csrf_token %}
+                <input type="url" name="article_link" value="{{ task.article_link }}" placeholder="أدخل الرابط" required>
+                <button type="submit">💾 حفظ</button>
+              </form>
+            </td>
+            <td>{{ task.publish_site }}</td>
+            <td>{{ task.publish_date|date:"Y-m-d" }}</td>
+            <td>
+              <form method="post" action="{% url 'update_task_status' task.id %}">{% csrf_token %}
+                <select name="status">
+                  <option value="in_progress" {% if task.status == 'in_progress' %}selected{% endif %}>⏳ جاري العمل</option>
+                  <option value="upload" {% if task.status == 'upload' %}selected{% endif %}>📤 تم الرفع</option>
+                  <option value="publish" {% if task.status == 'publish' %}selected{% endif %}>📢 تم النشر</option>
+                  <option value="done" {% if task.status == 'done' %}selected{% endif %}>✅ مكتملة</option>
+                </select>
+                <button type="submit">💾 حفظ</button>
+              </form>
+            </td>
+            <td>
+              <a href="{% url 'task_details' task.id %}" target="_blank">👁️ عرض</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>👌 لا توجد مهام مؤخرة</p>
+  {% endif %}
+{% endblock %}

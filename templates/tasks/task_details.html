@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}تفاصيل المهمة{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/task_details.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="task-details-container">
+  <h2>📄 تفاصيل المهمة</h2>
+
+  <p><strong>الكاتب:</strong> {{ task.writer.get_full_name|default:task.writer.username }}</p>
+  <p><strong>[جديد/تحديث]:</strong> {{ task.article_type_U_N|default:"-" }}</p>
+  <p><strong>[النوع]:</strong> {{ task.article_type_W_R_A_B|default:"-" }}</p>
+  <p><strong>عنوان المقال:</strong> {{ task.article_title }}</p>
+  <p><strong>تفاصيل المقال:</strong> {{ task.article_details }}</p>
+
+  <p><strong>رابط المقال:</strong>
+    {% if task.article_link %}
+      <a href="{{ task.article_link }}" target="_blank">اضغط هنا</a>
+    {% else %}
+      <span style="color: gray;">لا يوجد رابط</span>
+    {% endif %}
+  </p>
+
+  <p><strong>موقع النشر:</strong> {{ task.publish_site|default:"-" }}</p>
+  <p><strong>تاريخ النشر:</strong> {{ task.publish_date|default:"-" }}</p>
+  <p><strong>تاريخ الإضافة:</strong> {{ task.created_at|date:"Y-m-d H:i" }}</p>
+  <p><strong>الحالة الحالية:</strong> {{ task.get_status_display }}</p>
+
+  <p><strong>الإجراءات:</strong>
+    {% if request.user.role == "manager" %}
+      <a href="{% url 'edit_task' task.id %}">✏️ تعديل</a> |
+      <a href="{% url 'delete_task' task.id %}" onclick="return confirm('هل أنت متأكد أنك تريد حذف هذه المهمة؟');">🗑️ حذف</a>
+    {% else %}
+      <span style="color: gray;">لا توجد صلاحية</span>
+    {% endif %}
+  </p>
+
+  <a class="back-link" onclick="window.close();" style="display: inline-block; margin-top: 20px;">🔙 إغلاق النافذة</a>
+</div>
+{% endblock %}
