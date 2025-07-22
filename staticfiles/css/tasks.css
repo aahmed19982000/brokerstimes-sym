@@ -1,0 +1,155 @@
+/* المهام العامة */
+body {
+  background-color: #f7f7f7;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  direction: rtl;
+}
+
+/* العنوان الرئيسي */
+h1.page-title, h2.page-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+/* صندوق الفلاتر */
+.task-filter-form {
+  background-color: #fff;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  margin-bottom: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.task-filter-form label {
+  font-size: 0.9rem;
+  color: #444;
+}
+
+.task-filter-form select,
+.task-filter-form button,
+.task-filter-form a.reset-filter {
+  padding: 0.4rem 0.6rem;
+  font-size: 0.9rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.task-filter-form button {
+  background-color: #22c55e;
+  color: white;
+  border: none;
+}
+
+.task-filter-form a.reset-filter {
+  background-color: #f97316;
+  color: white;
+  text-decoration: none;
+}
+
+/* جدول المهام */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  box-shadow: 0 0 5px rgba(0,0,0,0.05);
+  margin-bottom: 2rem;
+}
+
+table thead {
+  background-color: #e5e7eb;
+  color: #111827;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+table th,
+table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+  vertical-align: middle;
+}
+
+table td a {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+/* الحالة */
+table select[name="status"] {
+  border: 1px solid #ccc;
+  padding: 0.3rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+.status-done {
+  background-color: #bbf7d0;
+  color: #166534;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.status-in_progress {
+  background-color: #fde68a;
+  color: #854d0e;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+/* الإشعارات */
+.notifications-box {
+  background-color: #fef3c7;
+  border: 1px solid #fcd34d;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border-radius: 8px;
+}
+
+.notification-item {
+  background-color: #fffbea;
+  border: 1px solid #facc15;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  border-radius: 6px;
+}
+
+.notification-item.unread {
+  border-left: 5px solid #facc15;
+}
+
+.notification-actions {
+  margin-top: 0.5rem;
+}
+
+.notification-actions button {
+  background-color: #fbbf24;
+  color: #fff;
+  border: none;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-inline-end: 0.5rem;
+}
+
+.notification-actions button:hover {
+  background-color: #f59e0b;
+}
+
+/* المستخدم الحالي */
+p[style*="background"] {
+  border-radius: 6px;
+  background-color: #e5e7eb !important;
+  color: #111827;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
