@@ -9,6 +9,10 @@ from .utils import get_valid_publish_date
 from django.utils import timezone
 from django.contrib import messages
 from categories.models import Site
+from django.urls import reverse
+
+
+
 def get_status_label(code):
     return {
         'in_progress': '⏳ جاري العمل',
@@ -165,10 +169,10 @@ def update_article_link(request, task_id):
     if request.method == 'POST':
         article_link = request.POST.get('article_link')
         task.article_link = article_link
-        task.save()
-        return redirect('my_tasks')  
+        task.save() 
 
-    return redirect('my_tasks')
+    previous_page = request.META.get('HTTP_REFERER', reverse('my_tasks'))
+    return redirect(previous_page)
 
 #وظيفة عرض المهمة بشكل منفصل 
 def task_details(request, task_id):
