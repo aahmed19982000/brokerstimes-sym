@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-#0$2bm*wkj+)5myzd(271k%6f$v^08&(-bzw(t4!6*z-+)p25c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['89.116.111.78', 'localhost']
 
 
 
@@ -130,10 +130,11 @@ USE_TZ = True
 AUTH_USER_MODEL = 'accounts.Users'
 
 
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -169,7 +170,7 @@ SECRET_KEY = 'django-insecure-#0$2bm*wkj+)5myzd(271k%6f$v^08&(-bzw(t4!6*z-+)p25c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+
 
 
 # Application definition
@@ -270,17 +271,8 @@ USE_TZ = True
 AUTH_USER_MODEL = 'accounts.Users'
 
 
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),]
-
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-try:
-    from . local_settings import *
-except ImportError:
-    pass
