@@ -3,8 +3,10 @@ from django.contrib.auth.decorators import login_required
 from accounts.decorators import role_required
 from tasks.models import Task
 from django.utils import timezone
-from django.db.models import Count, Q , F
+from django.db.models import Count, Q , F, Value
 from django.utils.timezone import localdate
+from django.db.models.functions import Concat
+
 
 
 
@@ -36,10 +38,12 @@ def dashboard_view(request):
     today_tasks = Task.objects.filter(publish_date=today).count()
 
     # تجميع المهام لكل كاتب مع حساب عدد المكتملة منهم
-    writers_progress = Task.objects.values(username=F('writer__username')).annotate(
+    writers_progress = Task.objects.values(
+    full_name=Concat(F('writer__first_name'), Value(' '), F('writer__last_name'))).annotate(
     total_tasks=Count('id'),
     completed_tasks=Count('id', filter=Q(status__in=['done', 'upload', 'publish']))
 )
+
 
     # حساب نسبة الإنجاز لكل كاتب
     for writer in writers_progress:

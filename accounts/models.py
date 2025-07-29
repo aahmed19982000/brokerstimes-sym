@@ -12,6 +12,8 @@ class Users(AbstractUser):
     )
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='employee')
     job_title = models.CharField(max_length=100, blank=True, null=True)
+    def __str__(self):
+        return self.get_full_name() or self.username
 
 
 class Notification(models.Model):
