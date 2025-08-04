@@ -1,5 +1,6 @@
 .notification-header {
   position: relative;
+  direction: rtl; /* مهم */
 }
 
 .notification-icon {
@@ -15,15 +16,16 @@
   border-radius: 50%;
   position: absolute;
   top: -8px;
-  right: -8px;
+  left: -8px; /* لأن الاتجاه RTL */
 }
 
 .notification-dropdown {
   position: absolute;
-  top: 40px;
-  right: 0;
+  top: 35px;
+  right: 0; /* علشان يظهر يمين */
+  left: auto;
   background-color: #fff;
-  border: 1px solid #ccc;
+  border: 1px solid #ddd;
   width: 320px;
   max-height: 400px;
   overflow-y: auto;
@@ -31,6 +33,7 @@
   display: none;
   z-index: 1000;
   text-align: right;
+  direction: rtl;
 }
 
 .notification-dropdown.show {
@@ -40,14 +43,27 @@
 .notification-item {
   padding: 10px;
   border-bottom: 1px solid #eee;
-  background-color: #f9f9f9;
+  background: #fffbe6;
 }
 
 .notification-item.unread {
-  background-color: #fff4cc;
+  background: #fff4cc;
 }
 
 .notification-actions {
   margin-top: 5px;
   text-align: left;
+}
+
+.notification-actions button {
+  background-color: transparent;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  margin-left: 10px;
+  font-size: 0.9em;
+}
+
+.notification-actions button:hover {
+  text-decoration: underline;
 }

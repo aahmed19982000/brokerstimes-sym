@@ -1,68 +1,97 @@
-<header>
-  <div class="logo">موقع نظام إدارة المهام</div>
-  <div class="user-nav">
-    <nav>
-      {% if request.user.is_authenticated %}
-        {% if request.user.role == "manager" %}
-          <a href="/home/dashboard/">الرئيسية</a>
-          <a href="/tasks/">المهام</a>
-          <div class="dropdown">
-            <button class="dropbtn">الموظفين</button>
-            <div class="dropdown-content">
-              <a href="/accounts/employees/">عرض الموظفين</a>
-              <a href="/accounts/signup/">إضافة موظف</a>
-              <a href="/categories/holiday/">الإجازات</a>
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}نظام إدارة المهام{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- خط كايرو -->
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  
+  <!-- ملف التنسيقات الأساسي -->
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  
+  <!-- ربط ملف header.css -->
+  <link rel="stylesheet" href="{% static 'css/header.css' %}">
+  
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+  <header>
+    <div class="logo">موقع نظام إدارة المهام</div>
+    <div class="user-nav">
+      <nav>
+        {% if request.user.is_authenticated %}
+          {% if request.user.role == "manager" %}
+            <a href="/home/dashboard/">الرئيسية</a>
+            <a href="/tasks/">المهام</a>
+            <div class="dropdown">
+              <button class="dropbtn">الموظفين</button>
+              <div class="dropdown-content">
+                <a href="/accounts/employees/">عرض الموظفين</a>
+                <a href="/accounts/signup/">إضافة موظف</a>
+                <a href="/categories/holiday/">الإجازات</a>
+              </div>
             </div>
-          </div>
-          <a href="/categories/site/">المواقع</a>
-        {% elif request.user.role == "employee" %}
-          <a href="/home/employee_dashboard/">الرئيسية</a>
-          <a href="/tasks/my_tasks/">مهامي</a>
+            <a href="/categories/site/">المواقع</a>
+          {% elif request.user.role == "employee" %}
+            <a href="/home/employee_dashboard/">الرئيسية</a>
+            <a href="/tasks/my_tasks/">مهامي</a>
+          {% endif %}
+          <a href="{% url 'logout' %}">تسجيل الخروج</a>
+        {% else %}
+          <a href="{% url 'index' %}">تسجيل الدخول</a>
         {% endif %}
+      </nav>
 
-        <a href="{% url 'logout' %}">تسجيل الخروج</a>
-      {% else %}
-        <a href="{% url 'index' %}">تسجيل الدخول</a>
-      {% endif %}
-    </nav>
+      <div style="display: flex; align-items: center; gap: 15px; position: relative;">
+        {% if request.user.is_authenticated %}
+         <span>👤 {{ request.user.get_full_name }}</span>
 
-    
-
-    <div style="display: flex; align-items: center; gap: 15px; position: relative;">
-      {% if request.user.is_authenticated %}
-        <span>👤 {{ request.user.username }}</span>
-
-        <!-- 🔔 إشعارات hhgh-->
-        <div class="notification-header">
-          <div class="notification-icon" onclick="toggleNotifications()">
-            🔔
-            {% if notifications|length > 0 %}
-              <span class="badge">{{ notifications|length }}</span>
+          <!-- 🔔 إشعارات -->
+          <div class="notification-wrapper">
+  <div class="notification-icon" onclick="toggleNotifications()">
+    🔔
+    {% if notifications|length > 0 %}
+      <span class="badge">{{ notifications|length }}</span>
+    {% endif %}
+  </div>
+  <div class="notification-dropdown" id="notificationDropdown">
+    <h4 class="notifications-title">الإشعارات</h4>
+    {% if notifications %}
+      {% for notify in notifications %}
+        <div class="notification-item {% if not notify.is_read %}unread{% endif %}" id="note-{{ notify.id }}">
+          <p class="notification-text">
+            <a href="{{ notify.link }}" target="_blank">{{ notify.message }}</a>
+          </p>
+          <div class="notification-actions">
+            {% if not notify.is_read %}
+              <button onclick="markAsRead({{ notify.id }})">✔</button>
             {% endif %}
-          </div>
-          <div class="notification-dropdown" id="notificationDropdown">
-            <h4 class="notifications-title">الإشعارات</h4>
-            {% if notifications %}
-              {% for notify in notifications %}
-                <div class="notification-item {% if not notify.is_read %}unread{% endif %}" id="note-{{ notify.id }}">
-                  <p class="notification-text">
-                    <a href="{{ notify.link }}" target="_blank">{{ notify.message }}</a>
-                  </p>
-                  <div class="notification-actions">
-                    {% if not notify.is_read %}
-                      <button onclick="markAsRead({{ notify.id }})">✔</button>
-                    {% endif %}
-                    <button onclick="deleteNotification({{ notify.id }})">🗑</button>
-                  </div>
-                </div>
-              {% endfor %}
-            {% else %}
-              <p class="notification-empty">لا توجد إشعارات جديدة</p>
-            {% endif %}
+            <button onclick="deleteNotification({{ notify.id }})">🗑</button>
           </div>
         </div>
-      {% endif %}
-      <img src="https://via.placeholder.com/40" alt="User" style="border-radius: 50%;">
-    </div>
+      {% endfor %}
+    {% else %}
+      <p class="notification-empty">لا توجد إشعارات جديدة</p>
+    {% endif %}
   </div>
-</header>
+</div>
+
+        {% endif %}
+        <img src="https://via.placeholder.com/40" alt="User" style="border-radius: 50%;">
+      </div>
+    </div>
+  </header>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <script src="{% static 'js/script.js' %}"></script>
+  <script src="{% static 'js/notifications.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

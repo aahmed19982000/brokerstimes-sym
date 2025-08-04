@@ -21,7 +21,7 @@ def get_status_label(code):
         'done': '✅ مكتملة'
     }.get(code, code)
 
-#وظيفة اناء المهمام وعرضها 
+#وظيفة انشاء المهمام وعرضها 
 @role_required('manager')
 
 def task_list(request):
@@ -48,8 +48,6 @@ def task_list(request):
     all_sites = Site.objects.all().values_list('id', 'name')
     all_writers = [(u.id, u.get_full_name() or u.username) for u in User.objects.filter(role='employee')]
 
-
-    
 
 
 
@@ -156,7 +154,7 @@ def update_task_status(request, task_id):
         for manager in managers:
             Notification.objects.create(
                 user=manager,
-                message=f"قام {request.user.username} بتحديث حالة المهمة '{task.article_title}' إلى {get_status_label(new_status)}",
+                message=f"قام {request.user.get_full_name()} بتحديث حالة المهمة '{task.article_title}' إلى {get_status_label(new_status)}",
                 link=f"/tasks/task/{task.id}/details/"
             )
     
