@@ -20,12 +20,17 @@ def get_valid_publish_date(task_type_wrab, site_name, writer):
     site_start = site.start_date
     current_days_gap = site.number_of_days
 
-    # آخر تاريخ لهذا الكاتب في نفس النوع على نفس الموقع
+    # آخر تاريخ لهذا الكاتب   
     last_used_date = Task.objects.filter(
-        publish_site__name=site_name,
         writer=writer,
-        article_type_W_R_A_B=current_type
     ).aggregate(Max('publish_date'))['publish_date__max'] or site_start
+
+    # آخر مهمة تم نشرها لهذا الكاتب حسب تاريخ النشر
+    last_task = Task.objects.filter(
+      writer=writer,
+    ).order_by('-publish_date').first()
+
+    last_type_used = last_task.article_type_W_R_A_B if last_task else None
 
     # عدد المهام في هذا اليوم لنفس الكاتب ولنفس الحد الأقصى
     task_count = Task.objects.filter(
@@ -39,7 +44,6 @@ def get_valid_publish_date(task_type_wrab, site_name, writer):
         task__writer=writer,
         task__publish_date=last_used_date,
         task__article_type_W_R_A_B__in=similar_types,
-        name=site_name
     ).distinct().values_list('number_of_days', flat=True)
 
     # آخر تاريخ نشر على نفس الموقع لأي كاتب
@@ -54,12 +58,13 @@ def get_valid_publish_date(task_type_wrab, site_name, writer):
     if (
         task_count < max_allowed and
         all(gap == current_days_gap for gap in previous_days_gaps) and
-        not is_outdated
+        not is_outdated and
+       (last_type_used and last_type_used.number_of_article == max_allowed)
     ):
         return last_used_date
 
     # غير كده نشتغل بالمعادلة الجديدة
-    new_date = latest_site_date + timedelta(days=current_days_gap)
+    new_date = last_used_date + timedelta(days=current_days_gap)
 
     while new_date.weekday() in weekend or new_date in custom_weekend:
         new_date += timedelta(days=1)

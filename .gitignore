@@ -2,7 +2,7 @@
 db.sqlite3
 
 # Ignore Python cache directories
-__pycache__/
+**/__pycache__/
 
 # Ignore compiled Python files
 *.pyc
@@ -11,3 +11,4 @@ __pycache__/
 
 # Ignore settings file (if sensitive)
 myproject/settings.py
+
