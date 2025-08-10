@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}نظرة عامة{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/site.css' %}">
+{% endblock %}
+{% block content %}
+
+<table>
+    <thead>
+        <tr>
+            <th>الموقع</th>
+            <th>فارق الايام</th>
+            <th>تاريخ البدء </th>
+            <th>رابط الموقع</th>
+            <th>الإجراءات</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for Site in categories %}
+        <tr>
+            <td>{{ Site.name }}</td>
+            <td>{{ Site.number_of_days }}</td>
+            <td>{{ Site.start_date }}</td>
+            <td>{{ Site.site_link }}</td>
+            
+            <td>
+                {% if request.user.role == "manager" %}
+                    <a href="{% url 'edit_site' Site.id %}">✏️ تعديل</a> |
+                    <a href="{% url 'delete_site' Site.id %}" onclick="return confirm('هل أنت متأكد من الحذف؟');">🗑️ حذف</a>
+                {% else %}
+                    لا توجد صلاحية
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h2>إضافة موقع جديد</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">حفظ</button>
+</form>
+
+
+{% endblock %}

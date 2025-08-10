@@ -1,0 +1,13 @@
+# Ignore SQLite DB
+db.sqlite3
+
+# Ignore Python cache directories
+**/__pycache__/
+
+# Ignore compiled Python files
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore settings file (if sensitive)
+myproject/settings.py
