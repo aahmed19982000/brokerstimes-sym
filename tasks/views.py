@@ -6,10 +6,11 @@ from accounts.decorators import role_required
 from accounts.models import Notification
 from django.contrib.auth import get_user_model
 from .utils import get_valid_publish_date 
-from django.utils import timezone
-from django.contrib import messages
 from categories.models import Site
 from django.urls import reverse
+from django.db.models import Q
+from django.core.paginator import Paginator
+
 
 
 
@@ -33,6 +34,7 @@ def task_list(request):
     writer_filter = request.GET.get('writer')
     status_filter = request.GET.get('status')
     site_filter = request.GET.get('site')
+    search_query = request.GET.get('q')   
 
     if writer_filter:
      tasks = tasks.filter(writer_id=writer_filter)
@@ -43,12 +45,23 @@ def task_list(request):
     if site_filter:
         tasks = tasks.filter(publish_site__id=site_filter)
 
+    if search_query:
+        tasks = tasks.filter(
+             Q(article_title__icontains=search_query) |
+             Q(article_details__icontains=search_query) |
+             Q(writer__username__icontains=search_query) |
+             Q(writer__first_name__icontains=search_query) |
+             Q(writer__last_name__icontains=search_query) |
+             Q(article_type_W_R_A_B__type__icontains=search_query)
+        )
+    paginator = Paginator(tasks, 10)  # 10 مهام في كل صفحة
+    page_number = request.GET.get('page')  # نقرأ رقم الصفحة من الرابط
+    page_obj = paginator.get_page(page_number)  # لو الرقم غلط، بيرجع أقرب صفحة موجودة
+
     
     # ✅ تجهيز البيانات للفورم والفلاتر
     all_sites = Site.objects.all().values_list('id', 'name')
     all_writers = [(u.id, u.get_full_name() or u.username) for u in User.objects.filter(role='employee')]
-
-
 
 
     if request.user.role == 'manager':
@@ -83,7 +96,9 @@ def task_list(request):
         'sites': all_sites,
         'selected_writer': writer_filter,
         'selected_status': status_filter,
-        'selected_site': site_filter
+        'selected_site': site_filter,
+        'search_query': search_query,
+        'page_obj': page_obj,
     })
 
 
@@ -115,6 +130,7 @@ def my_tasks(request):
     # ⬇️ الفلاتر من الـ GET
     status_filter = request.GET.get('status')
     site_filter = request.GET.get('site')
+    search_query = request.GET.get('q')
 
     # ⬇️ تطبيق الفلاتر
     if status_filter:
@@ -122,16 +138,29 @@ def my_tasks(request):
 
     if site_filter:
         tasks = tasks.filter(publish_site__id=site_filter)
+    if search_query:
+        tasks = tasks.filter(
+             Q(article_title__icontains=search_query) |
+             Q(article_details__icontains=search_query) |
+             Q(article_type_W_R_A_B__type__icontains=search_query)
+        )
+
+    paginator = Paginator(tasks, 10)  # 10 مهام في كل صفحة
+    page_number = request.GET.get('page')  # نقرأ رقم الصفحة من الرابط
+    page_obj = paginator.get_page(page_number)  # لو الرقم غلط، بيرجع أقرب صفحة موجودة
 
     # ⬇️ قائمة المواقع للاستخدام في الفلتر
     sites = Site.objects.all().values_list('id', 'name')
 
     return render(request, 'tasks/my_tasks.html', {
-        'tasks': tasks,
+        'tasks': page_obj,
         'notifications': notifications,
         'sites': sites,
         'selected_status': status_filter,
         'selected_site': site_filter,
+        'page_obj': page_obj,
+        'is_paginated': page_obj.has_other_pages(),
+        'search_query': search_query,
     })
 
 

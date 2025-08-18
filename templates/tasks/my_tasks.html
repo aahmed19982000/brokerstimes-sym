@@ -19,10 +19,12 @@
   </div>
 {% endif %}
 
-
-
 {# ✅ نموذج الفلاتر #}
 <form method="get" class="task-filter-form" style="margin-bottom: 20px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+     <label>
+    بحث:
+    <input type="text" name="q" placeholder="ابحث عن عنوان أو كاتب..." value="{{ search_query|default:'' }}">
+  </label>
   <label>
     الحالة:
     <select name="status">
@@ -99,9 +101,35 @@
     {% endfor %}
   </tbody>
 </table>
-{% endblock %}
 
-{% block extra_js %}
-  <script src="{% static 'js/task_popup.js' %}"></script>
-  <script src="{% static 'js/notifications.js' %}"></script>
+{# ✅ الباجيناشن #}
+{% if is_paginated %}
+  <div class="pagination" style="margin-top:20px; text-align:center;">
+    <ul style="list-style:none; display:inline-flex; gap:5px; padding:0;">
+
+      {% if page_obj.has_previous %}
+        <li><a href="?page=1{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.site %}&site={{ request.GET.site }}{% endif %}">⏮️ الأولى</a></li>
+        <li><a href="?page={{ page_obj.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.site %}&site={{ request.GET.site }}{% endif %}">◀️ السابق</a></li>
+      {% endif %}
+
+      {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+          <li><strong style="padding:5px 10px; background:#ddd; border-radius:5px;">{{ num }}</strong></li>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+          <li><a href="?page={{ num }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.site %}&site={{ request.GET.site }}{% endif %}">{{ num }}</a></li>
+        {% endif %}
+      {% endfor %}
+
+      {% if page_obj.has_next %}
+        <li><a href="?page={{ page_obj.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.site %}&site={{ request.GET.site }}{% endif %}">التالي ▶️</a></li>
+        <li><a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.site %}&site={{ request.GET.site }}{% endif %}">⏭️ الأخيرة</a></li>
+      {% endif %}
+
+    </ul>
+    <div style="margin-top:10px; font-weight:bold;">
+      صفحة {{ page_obj.number }} من {{ page_obj.paginator.num_pages }}
+    </div>
+  </div>
+{% endif %}
+
 {% endblock %}
