@@ -1,36 +1,48 @@
 from django import forms
 from .models import Task
-from accounts.models import Users  
+from accounts.models import Users
 
 class TaskForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user', None)  # نستقبل المستخدم من الـ view
-        super(TaskForm, self).__init__(*args, **kwargs)
-        self.fields['publish_date'].required = False
-
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
         self.user = user
 
-        # لو المستخدم مش مدير → نخفي حقل writer
         if user and user.role != 'manager':
-            self.fields['writer'].widget = forms.HiddenInput()
-            self.fields['writer'].required = False  # علشان ميظهرش خطأ
+            # الموظف العادي يعدل فقط الحقول المسموح بها
+            allowed_fields = ['image', 'image_type', 'image_details', 'article_link', 'status']
+            for field in list(self.fields.keys()):
+                if field not in allowed_fields:
+                    self.fields[field].widget = forms.HiddenInput()
+                    self.fields[field].required = False
 
-        # ممكن كمان نفلتر الكتاب مثلًا (اختياري)
-        if user and user.role == 'manager':
+            # Writer مخفي
+            self.fields['writer'].widget = forms.HiddenInput()
+            self.fields['writer'].required = False
+
+            # تاريخ النشر مخفي
+            self.fields['publish_date'].widget = forms.HiddenInput()
+            self.fields['publish_date'].required = False
+
+        else:
+            # المدير يشوف كل الحقول ويقدر يعدل publish_date
             self.fields['writer'].queryset = Users.objects.filter(role='employee')
+            self.fields['publish_date'].widget = forms.DateInput(attrs={'type': 'date'})
 
     class Meta:
         model = Task
         fields = '__all__'
-        widgets = {
-            'publish_date': forms.DateInput(attrs={'type': 'date'}),
-        }
 
     def save(self, commit=True):
         task = super().save(commit=False)
-        # لو المستخدم مش مدير → عيّن الكاتب بنفسه
+
         if self.user and self.user.role != 'manager':
+            # اجبر الكاتب يبقى المستخدم الحالي
             task.writer = self.user
+            # الموظف العادي → احتفظ بتاريخ النشر الموجود
+            if self.instance and self.instance.pk:
+                task.publish_date = self.instance.publish_date
+
         if commit:
             task.save()
         return task

@@ -1,116 +1,209 @@
-/* Reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Cairo', 'Arial', sans-serif;
-  background-color: #f4f5f7;
-  color: #333;
-  line-height: 1.6;
-  direction: rtl;
-}
-
-/* Container */
+/* تنسيق عام */
 .task-details-container {
+  direction: rtl;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   max-width: 800px;
-  margin: 40px auto;
+  margin: 30px auto;
   padding: 30px;
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
 }
 
-/* Header */
 .task-details-container h2 {
-  font-size: 24px;
+  color: #2d3748;
   margin-bottom: 25px;
-  color: #333;
-  border-bottom: 2px solid #ddd;
-  padding-bottom: 10px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #e2e8f0;
+  text-align: center;
+  font-size: 1.8rem;
+}
+
+/* تفاصيل المهمة */
+.detail-item {
   display: flex;
-  align-items: center;
-}
-
-.task-details-container h2::before {
-  content: "📄";
-  margin-left: 10px;
-  font-size: 24px;
-  color: #007bff;
-}
-
-/* Paragraphs */
-.task-details-container p {
   margin-bottom: 15px;
-  font-size: 16px;
-  text-align: right;
+  padding: 12px 15px;
+  background-color: #f8fafc;
+  border-radius: 8px;
+  border-right: 3px solid #4e73df;
 }
 
-.task-details-container p strong {
-  display: inline-block;
-  width: 160px;
-  color: #555;
-  text-align: left;
-}
-
-/* Links */
-a {
-  color: #007bff;
-  text-decoration: none;
-  transition: color 0.3s ease;
+.detail-item strong {
+  min-width: 150px;
+  color: #4a5568;
   font-weight: 600;
 }
 
-a:hover {
-  color: #0056b3;
+.detail-item p {
+  margin: 0;
+  color: #2d3748;
+  flex: 1;
 }
 
-/* Status Badge */
-.status-badge {
+/* الخط الفاصل */
+.task-details-container hr {
+  border: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, #cbd5e0, transparent);
+  margin: 30px 0;
+}
+
+/* النموذج */
+.task-form {
+  background-color: #f8fafc;
+  padding: 25px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: all 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #4e73df;
+  box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.15);
+}
+
+.form-group textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* الأزرار */
+.btn {
   display: inline-block;
-  padding: 5px 12px;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: 500;
+  padding: 12px 25px;
+  background-color: #4e73df;
   color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-align: center;
+  text-decoration: none;
 }
 
-.status-in_progress { background-color: #ffc107; }
-.status-upload      { background-color: #17a2b8; }
-.status-publish     { background-color: #007bff; }
-.status-done        { background-color: #28a745; }
+.btn:hover {
+  background-color: #3a56c4;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
-/* Back Link Button */
+.btn-secondary {
+  background-color: #6c757d;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+}
+
+.btn-danger {
+  background-color: #e74a3b;
+}
+
+.btn-danger:hover {
+  background-color: #d52a1a;
+}
+
+/* قسم الإجراءات */
+.action-section {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.action-section strong {
+  display: block;
+  margin-bottom: 15px;
+  color: #4a5568;
+  font-size: 1.1rem;
+}
+
+.action-links {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+/* رابط العودة */
 .back-link {
   display: inline-block;
-  margin-top: 30px;
+  margin-top: 25px;
   padding: 10px 20px;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
+  background-color: #e2e8f0;
+  color: #4a5568;
   border-radius: 6px;
-  color: #333;
+  text-decoration: none;
+  transition: all 0.3s;
   cursor: pointer;
-  font-weight: 600;
-  transition: background 0.3s ease;
 }
 
 .back-link:hover {
-  background-color: #e0e0e0;
+  background-color: #cbd5e0;
+  color: #2d3748;
 }
 
-/* Responsive */
+/* رسائل التنبيه */
+.alert {
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.alert-info {
+  background-color: #ebf8ff;
+  color: #2b6cb0;
+  border-left: 4px solid #2b6cb0;
+}
+
+/* التكيف مع الشاشات الصغيرة */
 @media (max-width: 768px) {
   .task-details-container {
     padding: 20px;
+    margin: 15px;
   }
-
-  .task-details-container p strong {
-    width: 130px;
+  
+  .detail-item {
+    flex-direction: column;
   }
-
-  .task-details-container h2 {
-    font-size: 22px;
+  
+  .detail-item strong {
+    min-width: auto;
+    margin-bottom: 5px;
+  }
+  
+  .action-links {
+    flex-direction: column;
+  }
+  
+  .btn {
+    width: 100%;
+    margin-bottom: 10px;
   }
 }

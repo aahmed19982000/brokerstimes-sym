@@ -1,73 +1,305 @@
-/* login.css */
+/* تنسيق عام للصفحة */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    direction: rtl;
+}
 
 /* حاوية تسجيل الدخول */
 .login-container {
-  background-color: white;
-  padding: 30px 40px;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 400px;
-  text-align: center;
-  margin: 50px auto;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 40px 30px;
+    border-radius: 16px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    backdrop-filter: blur(10px);
 }
 
-/* العناوين */
-h2 {
-  margin-bottom: 25px;
-  color: #333;
+.login-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
 }
 
-/* الرسائل */
+/* العنوان */
+.login-container h2 {
+    color: #2d3748;
+    margin-bottom: 12px;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.login-container p {
+    color: #6c757d;
+    margin-bottom: 30px;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+/* رسائل التنبيه */
 .messages {
-  list-style: none;
-  padding: 0;
-  margin-bottom: 20px;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 25px 0;
 }
 
 .messages li {
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 5px;
-  font-weight: bold;
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    font-weight: 500;
+    text-align: right;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-.messages li.success {
-  background-color: #d4edda;
-  color: #155724;
+.messages li::before {
+    font-size: 18px;
 }
 
-.messages li.error {
-  background-color: #f8d7da;
-  color: #721c24;
+.messages .success {
+    background-color: #f0fff4;
+    color: #2f855a;
+    border: 1px solid #c6f6d5;
 }
 
-/* الحقول */
-form input[type="text"],
-form input[type="email"],
-form input[type="password"] {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 15px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-sizing: border-box;
-  font-size: 14px;
+.messages .success::before {
+    content: "✅";
 }
 
-/* زر الدخول */
-form button {
-  width: 100%;
-  padding: 12px;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
+.messages .error {
+    background-color: #fff5f5;
+    color: #c53030;
+    border: 1px solid #fed7d7;
 }
 
-form button:hover {
-  background-color: #0056b3;
+.messages .error::before {
+    content: "❌";
+}
+
+.messages .info {
+    background-color: #ebf8ff;
+    color: #2b6cb0;
+    border: 1px solid #bee3f8;
+}
+
+.messages .info::before {
+    content: "ℹ️";
+}
+
+.messages .warning {
+    background-color: #fffbf0;
+    color: #b7791f;
+    border: 1px solid #feebc8;
+}
+
+.messages .warning::before {
+    content: "⚠️";
+}
+
+/* نموذج التسجيل */
+.login-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.login-container input {
+    padding: 16px 18px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    background-color: #f8fafc;
+    font-family: inherit;
+}
+
+.login-container input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+    background-color: white;
+    transform: translateY(-2px);
+}
+
+.login-container input::placeholder {
+    color: #a0aec0;
+}
+
+/* مجموعة الإدخال */
+.input-group {
+    position: relative;
+    text-align: right;
+}
+
+.input-group input {
+    width: 100%;
+    padding-right: 45px;
+}
+
+.input-group::before {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    font-size: 20px;
+    color: #a0aec0;
+}
+
+.input-group.username::before {
+    content: "👤";
+}
+
+.input-group.password::before {
+    content: "🔒";
+}
+
+/* زر التسجيل */
+.login-container button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 16px;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+    font-family: inherit;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-container button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 100%);
+    transition: transform 0.3s ease;
+    transform: translateX(-100%);
+}
+
+.login-container button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 7px 20px rgba(102, 126, 234, 0.4);
+}
+
+.login-container button:hover::before {
+    transform: translateX(0);
+}
+
+.login-container button:active {
+    transform: translateY(0);
+}
+
+/* تأثيرات للوضع الليلي */
+@media (prefers-color-scheme: dark) {
+    .login-container {
+        background: rgba(45, 55, 72, 0.95);
+        color: white;
+    }
+    
+    .login-container h2 {
+        color: white;
+    }
+    
+    .login-container p {
+        color: #cbd5e0;
+    }
+    
+    .login-container input {
+        background-color: #4a5568;
+        border-color: #4a5568;
+        color: white;
+    }
+    
+    .login-container input::placeholder {
+        color: #a0aec0;
+    }
+    
+    .login-container input:focus {
+        background-color: #4a5568;
+        border-color: #667eea;
+    }
+}
+
+/* تصميم متجاوب */
+@media (max-width: 480px) {
+    body {
+        padding: 15px;
+    }
+    
+    .login-container {
+        padding: 30px 20px;
+    }
+    
+    .login-container h2 {
+        font-size: 24px;
+    }
+    
+    .login-container p {
+        font-size: 14px;
+    }
+    
+    .login-container input {
+        padding: 14px 16px;
+        font-size: 15px;
+    }
+    
+    .login-container button {
+        padding: 14px;
+        font-size: 16px;
+    }
+}
+
+/* رسوم متحركة دقيقة */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-container {
+    animation: fadeIn 0.6s ease-out;
+}
+
+/* تحسينات إضافية للواجهة */
+.login-footer {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #e2e8f0;
+    color: #6c757d;
+    font-size: 14px;
+}
+
+/* تأثيرات لرسائل الخطأ */
+input:invalid {
+    border-color: #fc8181;
+}
+
+input:valid {
+    border-color: #68d391;
 }
