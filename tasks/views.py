@@ -202,8 +202,47 @@ def update_article_link(request, task_id):
     return redirect(previous_page)
 
 #وظيفة عرض المهمة بشكل منفصل 
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Task
+from .forms import TaskForm
+
 def task_details(request, task_id):
     task = get_object_or_404(Task, id=task_id)
-    return render(request, 'tasks/task_details.html', {'task': task})
 
+    # فقط الكاتب أو المدير يستطيع التعديل
+    if request.user != task.writer and request.user.role != 'manager':
+        return redirect('no_permission')
 
+    # تجهيز قوائم الاختيارات للتمبلت
+    status_choices = Task._meta.get_field('status').choices
+    image_type_choices = Task._meta.get_field('image_type').choices
+
+    if request.method == 'POST':
+        if request.user.role == 'manager':
+            # المدير يستخدم الفورم الكامل
+            form = TaskForm(request.POST, instance=task, user=request.user)
+            if form.is_valid():
+                form.save()
+                return redirect('task_details', task_id=task.id)
+        else:
+            # الموظف العادي يحدّث الحقول المسموح بها فقط
+            allowed_fields = ['status', 'article_link', 'image', 'image_type', 'image_details']
+            for field in allowed_fields:
+                value = request.POST.get(field)
+                if value is not None:
+                    setattr(task, field, value)
+            # الموظف العادي لا يغير publish_date
+            task.save()
+            return redirect('task_details', task_id=task.id)
+    else:
+        if request.user.role == 'manager':
+            form = TaskForm(instance=task, user=request.user)
+        else:
+            form = None  # الموظف العادي يستخدم الحقول مباشرة في التمبلت، لا يحتاج فورم كامل
+
+    return render(request, 'tasks/task_details.html', {
+        'form': form,
+        'task': task,
+        'status_choices': status_choices,
+        'image_type_choices': image_type_choices,
+    })

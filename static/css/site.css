@@ -1,65 +1,28 @@
-input, select, textarea {
-  width: 100%;
-  padding: 8px;
-  margin: 5px 0 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+/* تنسيق عام للصفحة */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-    font-family: Arial, sans-serif;
-    direction: rtl;
-    padding: 30px;
-    background-color: #f9f9f9;
-    color: #333;
+  font-family: 'Cairo', sans-serif;
+  background-color: #f8f9fc;
+  color: #4a5568;
+  line-height: 1.6;
+  direction: rtl;
 }
 
-h1, h2 {
-    color: #222;
-    margin-bottom: 15px;
+main {
+  min-height: calc(100vh - 70px);
+  padding: 30px 20px;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 40px;
-    background-color: #fff;
-}
-
-th, td {
-    padding: 10px;
-    border: 1px solid #ccc;
-    text-align: right;
-}
-
-th {
-    background-color: #eee;
-}
-
-a {
-    color: #007bff;
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: underline;
-}
-
-form {
-    background-color: #fff;
-    padding: 20px;
-    border: 1px solid #ddd;
-}
-
-button {
-    padding: 10px 20px;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-button:hover {
-    background-color: #218838;
+/* التكيف مع الشاشات الصغيرة */
+@media (max-width: 768px) {
+  main {
+    padding: 20px 15px;
+  }
 }
