@@ -14,7 +14,7 @@
   <div class="stats">
     <div class="stat-box">
       <h2>{{ total_tasks }}</h2>
-      <p>مهام اليوم</p>
+      <p>عدد المهام  </p>
     </div>
     <div class="stat-box">
       <h2>{{ completed_tasks }}</h2>
@@ -137,4 +137,77 @@
   {% else %}
     <p>👌 لا توجد مهام مؤخرة</p>
   {% endif %}
+
+  <h2 style="text-align: center; margin-bottom: 20px;">📸 مقالات تحتاج الي صور تم ارسلها للمصمم</h2>
+<table class="task-table">
+  <thead>
+    <tr>
+      <th>[النوع]</th>
+      <th>عنوان الصورة المطلوبة</th>
+      <th>موقع النشر</th>
+      <th>نوع الصورة</th>
+      <th>حالة الصورة</th>
+      <th>حالة المقال</th>
+      <th>المزيد</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for task in image_in_progress %}
+      <tr>
+        <td>{{ task.article_type_W_R_A_B }}</td>
+        <td>{{ task.image }}</td>
+        <td>{{ task.publish_site }}</td>
+        <td>{{ task.get_image_type_display }}</td>
+        <td>{{ task.get_image_status_display }}</td>
+        <td>{{ task.get_status_display }}</td>
+        <td><a href="{% url 'task_details' task.id %}" target="_blank">👁️</a></td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="8" style="text-align: center;">لا توجد صور مطلوبة من المصمم </td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+
+<h2 style="text-align: center; margin-bottom: 20px;">📸 مقالات تحتاج الي رفع الصور</h2>
+<table class="task-table">
+  <thead>
+    <tr>
+      <th>[النوع]</th>
+      <th>عنوان الصورة المطلوبة</th>
+      <th>موقع النشر</th>
+      <th>نوع الصورة</th>
+      <th>حالة الصورة</th>
+      <th>حالة المقال</th>
+      <th>المزيد</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for task in image_in_send %}
+      <tr>
+        <td>{{ task.article_type_W_R_A_B }}</td>
+        <td>{{ task.image }}</td>
+        <td>{{ task.publish_site }}</td>
+        <td>{{ task.get_image_type_display }}</td>
+        
+        <td>
+          <form method="post" action="{% url 'update_image_status' task.id %}">
+            {% csrf_token %}
+            <select name="image_status" onchange="this.form.submit()">
+              <option value="in_progress" {% if task.image_status == 'in_progress' %}selected{% endif %}>⏳ جاري العمل</option>
+              <option value="send" {% if task.image_status == 'send' %}selected{% endif %}>تم الارسال للكاتب</option>
+              <option value="publish" {% if task.image_status == 'publish' %}selected{% endif %}>✅ تم الرفع على الموقع</option>
+            </select>
+          </form>
+        </td>
+        
+        <td>{{ task.get_status_display }}</td>
+        <td><a href="{% url 'task_details' task.id %}" target="_blank">👁️</a></td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="8" style="text-align: center;">لا توجد صور مطلوبة من المصمم </td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
 {% endblock %}

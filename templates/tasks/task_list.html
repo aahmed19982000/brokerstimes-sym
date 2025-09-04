@@ -120,19 +120,42 @@
   </div>
 
   <!-- الباجيناشن -->
-  <div class="pagination">
-    {% if page_obj.has_previous %}
-      <a href="?page=1{% if search_query %}&q={{ search_query }}{% endif %}">الأولى</a>
-      <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}">السابق</a>
-    {% endif %}
+<div class="pagination">
+  {% if page_obj.has_previous %}
+    <a href="?page=1
+      {% if search_query %}&q={{ search_query }}{% endif %}
+      {% if selected_writer %}&writer={{ selected_writer }}{% endif %}
+      {% if selected_status %}&status={{ selected_status }}{% endif %}
+      {% if selected_site %}&site={{ selected_site }}{% endif %}
+    ">الأولى</a>
 
-    <span>صفحة {{ page_obj.number }} من {{ page_obj.paginator.num_pages }}</span>
+    <a href="?page={{ page_obj.previous_page_number }}
+      {% if search_query %}&q={{ search_query }}{% endif %}
+      {% if selected_writer %}&writer={{ selected_writer }}{% endif %}
+      {% if selected_status %}&status={{ selected_status }}{% endif %}
+      {% if selected_site %}&site={{ selected_site }}{% endif %}
+    ">السابق</a>
+  {% endif %}
 
-    {% if page_obj.has_next %}
-      <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}">التالي</a>
-      <a href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&q={{ search_query }}{% endif %}">الأخيرة</a>
-    {% endif %}
-  </div>
+  <span>صفحة {{ page_obj.number }} من {{ page_obj.paginator.num_pages }}</span>
+
+  {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}
+      {% if search_query %}&q={{ search_query }}{% endif %}
+      {% if selected_writer %}&writer={{ selected_writer }}{% endif %}
+      {% if selected_status %}&status={{ selected_status }}{% endif %}
+      {% if selected_site %}&site={{ selected_site }}{% endif %}
+    ">التالي</a>
+
+    <a href="?page={{ page_obj.paginator.num_pages }}
+      {% if search_query %}&q={{ search_query }}{% endif %}
+      {% if selected_writer %}&writer={{ selected_writer }}{% endif %}
+      {% if selected_status %}&status={{ selected_status }}{% endif %}
+      {% if selected_site %}&site={{ selected_site }}{% endif %}
+    ">الأخيرة</a>
+  {% endif %}
+</div>
+
 
   {% if request.user.role == "manager" and form %}
     <div class="task-form-container">

@@ -72,6 +72,8 @@ def t_login(request):
                 return redirect(next_url)
             elif user.role == 'manager':
                  return redirect('dashboard')
+            elif user.role == 'designer':
+                 return redirect('designer_dashboard')
             else:
                 return redirect('employee_dashboard')
         else:

@@ -209,13 +209,15 @@ from .forms import TaskForm
 def task_details(request, task_id):
     task = get_object_or_404(Task, id=task_id)
 
-    # فقط الكاتب أو المدير يستطيع التعديل
-    if request.user != task.writer and request.user.role != 'manager':
+    # السماح للمدير أو الكاتب أو المصمم بالوصول
+    if request.user != task.writer and request.user.role not in ['manager', 'designer']:
         return redirect('no_permission')
 
     # تجهيز قوائم الاختيارات للتمبلت
     status_choices = Task._meta.get_field('status').choices
     image_type_choices = Task._meta.get_field('image_type').choices
+    is_need_image = Task._meta.get_field('is_need_image').choices
+    image_status= Task._meta.get_field('image_status').choices
 
     if request.method == 'POST':
         if request.user.role == 'manager':
@@ -224,25 +226,106 @@ def task_details(request, task_id):
             if form.is_valid():
                 form.save()
                 return redirect('task_details', task_id=task.id)
-        else:
-            # الموظف العادي يحدّث الحقول المسموح بها فقط
-            allowed_fields = ['status', 'article_link', 'image', 'image_type', 'image_details']
+
+        elif request.user.role == 'designer':
+            # المصمم يحدّث الحقول المسموح بها فقط
+            allowed_fields = ['image_type', 'image_details', 'is_need_image','image_status']
             for field in allowed_fields:
                 value = request.POST.get(field)
                 if value is not None:
                     setattr(task, field, value)
-            # الموظف العادي لا يغير publish_date
             task.save()
             return redirect('task_details', task_id=task.id)
+
+        else:
+            # الموظف العادي يحدّث الحقول المسموح بها فقط
+            allowed_fields = ['status', 'article_link', 'image', 'image_type', 'image_details', 'is_need_image','image_status']
+            for field in allowed_fields:
+                value = request.POST.get(field)
+                if value is not None:
+                    setattr(task, field, value)
+            task.save()
+            return redirect('task_details', task_id=task.id)
+
     else:
         if request.user.role == 'manager':
             form = TaskForm(instance=task, user=request.user)
         else:
-            form = None  # الموظف العادي يستخدم الحقول مباشرة في التمبلت، لا يحتاج فورم كامل
+            form = None  # المصمم والموظف العادي يستخدمون الحقول مباشرة في التمبلت
 
     return render(request, 'tasks/task_details.html', {
         'form': form,
         'task': task,
         'status_choices': status_choices,
         'image_type_choices': image_type_choices,
+        'IS_NEED_IMAGE': is_need_image,
+        'image_status': image_status,
     })
+
+#وظيفة تحويل الصور للمصميم
+@role_required('manager','designer')
+def image_to_Designer(request):
+    search_query = request.GET.get("q", "")
+    selected_writer = request.GET.get("writer", "")
+    selected_status = request.GET.get("image_status", "")
+    selected_site = request.GET.get("site", "")
+
+    tasks = Task.objects.filter(is_need_image="YES")
+
+    if search_query:
+        tasks = tasks.filter(
+            Q(title__icontains=search_query) |
+            Q(writer__username__icontains=search_query) |
+            Q(writer__first_name__icontains=search_query) |
+            Q(writer__last_name__icontains=search_query)
+        )
+
+    if selected_writer:
+        tasks = tasks.filter(writer_id=selected_writer)
+
+    if selected_status:
+        tasks = tasks.filter(image_status=selected_status)
+
+    if selected_site:
+        tasks = tasks.filter(publish_site_id=selected_site)
+    
+    # الباجيناشن
+    paginator = Paginator(tasks, 20)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    writer_ids = Task.objects.values_list("writer_id", flat=True).distinct()
+    writers = [(w.id, w.get_full_name() or w.username) for w in User.objects.filter(id__in=writer_ids)]
+    sites = Task.objects.values_list("publish_site__id", "publish_site__name").distinct()
+    image_status = [
+        ('in_progress', '⏳ جاري العمل'),
+        ('send', 'تم الارسال للكاتب'),
+        ('publish', '✅ تم الرفع على الموقع'),
+    ]
+
+    context = {
+        "tasks": page_obj,
+        "page_obj": page_obj,
+        "search_query": search_query,
+        "writers": writers,
+        "selected_writer": selected_writer,
+        "selected_status": selected_status,
+        "sites": sites,
+        "selected_site": selected_site,
+        "image_status": image_status,
+    }
+
+    return render(request, "tasks/image_form.html", context)
+
+
+@role_required('manager','designer', 'employee')
+def update_image_status(request, task_id):
+    task= get_object_or_404 (Task ,id=task_id)
+    new_status = request.POST.get("image_status")
+
+    # تحقق أن القيمة الجديدة موجودة في الخيارات
+    valid_statuses = ['in_progress', 'send', 'publish']
+    if new_status in valid_statuses:
+        task.image_status = new_status
+        task.save()
+    return redirect(request.META.get("HTTP_REFERER", "dashboard"))

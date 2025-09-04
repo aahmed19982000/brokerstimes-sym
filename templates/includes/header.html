@@ -36,10 +36,16 @@
               </div>
             </div>
             <a href="/categories/site/">المواقع</a>
+
           {% elif request.user.role == "employee" %}
             <a href="/home/employee_dashboard/">الرئيسية</a>
             <a href="/tasks/my_tasks/">مهامي</a>
+
+          {% elif request.user.role == "designer" %}
+            <a href="/home/designer_dashboard/">الرئيسية</a>
+            <a href="/tasks/image_form/">مهامي</a>
           {% endif %}
+
           <a href="{% url 'logout' %}">تسجيل الخروج</a>
         {% else %}
           <a href="{% url 'index' %}">تسجيل الدخول</a>
@@ -48,38 +54,37 @@
 
       <div style="display: flex; align-items: center; gap: 15px; position: relative;">
         {% if request.user.is_authenticated %}
-         <span>👤 {{ request.user.get_full_name }}</span>
+          <span>👤 {{ request.user.get_full_name }}</span>
 
           <!-- 🔔 إشعارات -->
           <div class="notification-wrapper">
-  <div class="notification-icon" onclick="toggleNotifications()">
-    🔔
-    {% if notifications|length > 0 %}
-      <span class="badge">{{ notifications|length }}</span>
-    {% endif %}
-  </div>
-  <div class="notification-dropdown" id="notificationDropdown">
-    <h4 class="notifications-title">الإشعارات</h4>
-    {% if notifications %}
-      {% for notify in notifications %}
-        <div class="notification-item {% if not notify.is_read %}unread{% endif %}" id="note-{{ notify.id }}">
-          <p class="notification-text">
-            <a href="{{ notify.link }}" target="_blank">{{ notify.message }}</a>
-          </p>
-          <div class="notification-actions">
-            {% if not notify.is_read %}
-              <button onclick="markAsRead({{ notify.id }})">✔</button>
-            {% endif %}
-            <button onclick="deleteNotification({{ notify.id }})">🗑</button>
+            <div class="notification-icon" onclick="toggleNotifications()">
+              🔔
+              {% if notifications|length > 0 %}
+                <span class="badge">{{ notifications|length }}</span>
+              {% endif %}
+            </div>
+            <div class="notification-dropdown" id="notificationDropdown">
+              <h4 class="notifications-title">الإشعارات</h4>
+              {% if notifications %}
+                {% for notify in notifications %}
+                  <div class="notification-item {% if not notify.is_read %}unread{% endif %}" id="note-{{ notify.id }}">
+                    <p class="notification-text">
+                      <a href="{{ notify.link }}" target="_blank">{{ notify.message }}</a>
+                    </p>
+                    <div class="notification-actions">
+                      {% if not notify.is_read %}
+                        <button onclick="markAsRead({{ notify.id }})">✔</button>
+                      {% endif %}
+                      <button onclick="deleteNotification({{ notify.id }})">🗑</button>
+                    </div>
+                  </div>
+                {% endfor %}
+              {% else %}
+                <p class="notification-empty">لا توجد إشعارات جديدة</p>
+              {% endif %}
+            </div>
           </div>
-        </div>
-      {% endfor %}
-    {% else %}
-      <p class="notification-empty">لا توجد إشعارات جديدة</p>
-    {% endif %}
-  </div>
-</div>
-
         {% endif %}
         <img src="https://via.placeholder.com/40" alt="User" style="border-radius: 50%;">
       </div>

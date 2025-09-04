@@ -5,9 +5,13 @@ STATUS_CHOICES = [  ('in_progress', '⏳ جاري العمل'),
     ('upload', 'تم الرفع'),
     ('publish', 'تم النشر'),
     ('done', '✅ مكتملة'), ]
-STATUS_IMAGE = [  ('in_progress', '⏳ جاري العمل'),
-    ('send', 'تم الارسال للكاتب'),
-    ('publish', 'تم النشر'), ]
+TYPE_IMAGE = [  ('صورة بارزة', 'صورة بارزة'),
+    ('صورة داخلية', 'صورة داخلية'), ]
+IS_NEED_IMAGE = [  ('NO', 'لا '),
+    ('YES', 'نعم'), ]
+IMAGE_STATUS = [  ('in_progress', '⏳ جاري العمل'),
+    ('send', 'تم الارسال للكاتب '),
+    ('publish', '✅تم الرفع على الموقع'), ]
 
 class Task(models.Model):
     writer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="الكاتب") 
@@ -19,9 +23,11 @@ class Task(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاريخ الإضافة")
     article_type_W_R_A_B = models.ForeignKey(Article_type_W_R_A_B, on_delete=models.CASCADE, verbose_name=" نوع المقال( تحذير / تقييم/تعليمي/افضل شركات)",null=True, blank=True)
     status = models.CharField(max_length=20,choices=STATUS_CHOICES,default='in_progress',verbose_name='حالة المهمة')
+    is_need_image= models.CharField(max_length=20,choices=IS_NEED_IMAGE,default='NO',verbose_name='هل تحتاج لصور؟', null=True, blank=True)
     image= models.CharField(max_length=255, verbose_name="الصورة المطلوبة من المصمم", null=True, blank=True)
-    image_type=models.CharField(max_length=20,choices=STATUS_IMAGE,default='in_progress',verbose_name='حالة الصور', null=True, blank=True)
+    image_type=models.CharField(max_length=20,choices=TYPE_IMAGE,default='صورة بارزة',verbose_name='نوع الصورة', null=True, blank=True)
     image_details = models.TextField(verbose_name="تفاصيل الصور" , null=True, blank=True)
+    image_status= models.CharField(max_length=20,choices=IMAGE_STATUS,default='in_progress',verbose_name='حالة الصورر', null=True, blank=True)
 
     def __str__(self):
         return self.article_title
