@@ -23,10 +23,10 @@
       <p>{{ task.article_title }}</p>
     </div>
 
-    <div class="detail-item">
-      <strong>تفاصيل المقال:</strong>
-      <p>{{ task.article_details }}</p>
-    </div>
+    <div class="form-group">
+        <label for="article_details">📝 تفاصيل المقال:</label>
+        <textarea name="article_detailss" id="article_details"  readonly >{{ task.article_details }}</textarea>
+      </div>
 
     <div class="detail-item">
       <strong>تاريخ النشر:</strong>

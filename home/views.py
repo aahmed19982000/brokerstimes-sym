@@ -34,11 +34,12 @@ def dashboard_view(request):
 
 
     # نسبة التقدم للكل
-    progress_percent = int((completed_tasks / total_tasks) * 100) if total_tasks > 0 else 0
+    total_finished = completed_tasks + completed_publish 
+    progress_percent = int((total_finished / total_tasks) * 100) if total_tasks > 0 else 0
 
 
-    # عدد المهام المتبقية = أي حاجة غير "done"
-    pending_tasks = Task.objects.exclude(status='done').count()
+    # عدد المهام المتبقية  
+    pending_tasks = Task.objects.filter(status='in_progress').count()
 
     # عدد المهام المُضافة اليوم
     today_tasks = Task.objects.filter(publish_date=today).count()
@@ -95,8 +96,9 @@ def employee_dashboard(request):
     total = tasks.count()
     completed = tasks.filter(status__in=['done','upload']).count()
     completed_publish= tasks.filter(status__in=['publish']).count()
-    pending = total - completed
-    progress_percent = int((completed / total) * 100) if total > 0 else 0
+    pending = tasks.filter(status__in=['in_progress']).count()
+    total_finished = completed + completed_publish
+    progress_percent = int((total_finished / total) * 100) if total > 0 else 0
 
     # ✅ المهام المطلوبة اليوم
     todays_tasks = tasks.filter(publish_date=today)
