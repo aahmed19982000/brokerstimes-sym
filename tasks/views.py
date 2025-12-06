@@ -12,8 +12,6 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 
 
-
-
 def get_status_label(code):
     return {
         'in_progress': '⏳ جاري العمل',
@@ -202,7 +200,7 @@ def update_article_link(request, task_id):
     return redirect(previous_page)
 
 #وظيفة عرض المهمة بشكل منفصل 
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, redirect
 from .models import Task
 from .forms import TaskForm
 
@@ -329,3 +327,25 @@ def update_image_status(request, task_id):
         task.image_status = new_status
         task.save()
     return redirect(request.META.get("HTTP_REFERER", "dashboard"))
+
+#وظيفة البحث عن الرابط المنشور من خلال صفحة 
+def auto_update_tasks(keyword=None):
+    tasks = Task.objects.filter(status="done")
+    print(f"عدد المهام قبل التحديث: {tasks.count()}")
+
+
+    for task in tasks:
+        # لو فيه كلمة محددة، نتأكد إنها موجودة في عنوان المقال
+        if keyword and keyword not in task.article_title:
+            continue  # نتجاوز المهمة لو الكلمة مش موجودة
+
+        result = check_if_task_published(task.article_title)
+
+        if result["found"]:
+            task.status = "published"
+            task.published_url = result["url"]
+            task.save()
+            print(f"[✔] Task {task.id} published at {result['url']} (score {result['score']})")
+        else:
+            print(f"[✘] Task {task.id} NOT found (score {result['score']})")
+        

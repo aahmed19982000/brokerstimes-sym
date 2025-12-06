@@ -1,19 +1,19 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}📌 مهامي{% endblock %}
-
 {% block extra_css %}
   <link rel="stylesheet" href="{% static 'css/my_tasks.css' %}">
+  <title>مهامي - نظام إدارة المهام</title>
+  <meta name="title" content="مهامي - نظام إدارة المهام">
+  <meta name="description" content="استعرض مهامك الشخصية في نظام إدارة المهام. قم بتصفية المهام حسب الحالة أو موقع النشر، وابقَ على اطلاع دائم بتحديثات مهامك.">
 {% endblock %}
 
 {% block content %}
 <div class="container">
-  <h2 class="page-title">📌 مهامي</h2>
+  <h1 class="page-title">📌 مهامي</h1>
 
-  {# ✅ رسائل التنبيه من backend #}
   {% if messages %}
-    <div class="messages">
+    <div class="messages" role="alert">
       {% for message in messages %}
         <div class="alert {% if message.tags %}{{ message.tags }}{% endif %}">
           {{ message }}
@@ -22,16 +22,15 @@
     </div>
   {% endif %}
 
-  {# ✅ نموذج الفلاتر #}
-  <form method="get" class="task-filter-form">
+  <form method="get" class="task-filter-form" aria-label="تصفية المهام">
     <label>
       بحث:
-      <input type="text" name="q" placeholder="ابحث عن عنوان أو كاتب..." value="{{ search_query|default:'' }}">
+      <input type="text" name="q" placeholder="ابحث عن عنوان أو كاتب..." value="{{ search_query|default:'' }}" aria-label="البحث عن مهام">
     </label>
     
     <label>
       الحالة:
-      <select name="status">
+      <select name="status" aria-label="تصفية حسب الحالة">
         <option value="">-- الكل --</option>
         <option value="in_progress" {% if selected_status == "in_progress" %}selected{% endif %}>⏳ جاري</option>
         <option value="upload" {% if selected_status == "upload" %}selected{% endif %}>📤 تم الرفع</option>
@@ -42,7 +41,7 @@
 
     <label>
       موقع النشر:
-      <select name="site">
+      <select name="site" aria-label="تصفية حسب موقع النشر">
         <option value="">-- الكل --</option>
         {% for id, name in sites %}
           <option value="{{ id }}" {% if id|stringformat:"s" == selected_site %}selected{% endif %}>{{ name }}</option>
@@ -54,40 +53,39 @@
     <a href="{% url 'my_tasks' %}" class="reset-filter">🔄 إعادة تعيين</a>
   </form>
 
-  {# ✅ جدول المهام #}
-  <div class="task-table-container">
-    <table class="task-table">
+  <div class="task-table-container" id="tableContainer">
+    <table class="task-table" role="table" aria-label="قائمة المهام">
       <thead>
         <tr>
-          <th>عنوان المقال</th>
-          <th>[النوع]</th>
-          <th>التفاصيل</th>
-          <th>رابط المقال</th>
-          <th>موقع النشر</th>
-          <th>تاريخ النشر</th>
-          <th>الحالة</th>
-          <th>عرض المزيد</th>
+          <th scope="col">عنوان المقال</th>
+          <th scope="col">[النوع]</th>
+          <th scope="col">التفاصيل</th>
+          <th scope="col">رابط المقال</th>
+          <th scope="col">موقع النشر</th>
+          <th scope="col">تاريخ النشر</th>
+          <th scope="col">الحالة</th>
+          <th scope="col">عرض المزيد</th>
         </tr>
       </thead>
       <tbody>
         {% for task in tasks %}
           <tr>
-            <td>{{ task.article_title }}</td>
-            <td>{{ task.article_type_W_R_A_B }}</td>
-            <td>{{ task.article_details }}</td>
-            <td>
+            <td data-label="عنوان المقال">{{ task.article_title }}</td>
+            <td data-label="النوع">{{ task.article_type_W_R_A_B }}</td>
+            <td data-label="التفاصيل">{{ task.article_details }}</td>
+            <td data-label="رابط المقال">
               <form method="post" action="{% url 'update_article_link' task.id %}" class="article-link-form">
                 {% csrf_token %}
-                <input type="url" name="article_link" value="{{ task.article_link|default:'' }}" placeholder="أدخل الرابط" required>
+                <input type="url" name="article_link" value="{{ task.article_link|default:'' }}" placeholder="أدخل الرابط" required aria-label="رابط المقال">
                 <button type="submit">💾 حفظ</button>
               </form>
             </td>
-            <td>{{ task.publish_site }}</td>
-            <td>{{ task.publish_date|default:"-" }}</td>
-            <td>
+            <td data-label="موقع النشر">{{ task.publish_site }}</td>
+            <td data-label="تاريخ النشر">{{ task.publish_date|default:"-" }}</td>
+            <td data-label="الحالة">
               <form method="post" action="{% url 'update_task_status' task.id %}">
                 {% csrf_token %}
-                <select name="status" onchange="this.form.submit()" class="status-select">
+                <select name="status" onchange="this.form.submit()" class="status-select" aria-label="تحديث حالة المهمة">
                   <option value="in_progress" {% if task.status == 'in_progress' %}selected{% endif %}>⏳ جاري العمل</option>
                   <option value="upload" {% if task.status == 'upload' %}selected{% endif %}>📤 تم الرفع</option>
                   <option value="publish" {% if task.status == 'publish' %}selected{% endif %}>📢 تم النشر</option>
@@ -95,8 +93,8 @@
                 </select>
               </form>
             </td>
-            <td>
-              <a href="{% url 'task_details' task.id %}" target="_blank" class="view-btn">👁️ عرض</a>
+            <td data-label="عرض المزيد">
+              <a href="{% url 'task_details' task.id %}" target="_blank" rel="noopener noreferrer" class="view-btn">👁️ عرض</a>
             </td>
           </tr>
         {% empty %}
@@ -108,18 +106,17 @@
     </table>
   </div>
 
-  {# ✅ الباجيناشن #}
   {% if is_paginated %}
-    <div class="pagination">
+    <nav class="pagination" aria-label="تصفح الصفحات">
       <ul>
         {% if page_obj.has_previous %}
           <li>
-            <a href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.site %}&site={{ request.GET.site }}{% endif %}">
+            <a href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.site %}&site={{ request.GET.site }}{% endif %}" aria-label="الصفحة الأولى">
               ⏮️ الأولى
             </a>
           </li>
           <li>
-            <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.site %}&site={{ request.GET.site }}{% endif %}">
+            <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.site %}&site={{ request.GET.site }}{% endif %}" aria-label="الصفحة السابقة">
               ◀️ السابق
             </a>
           </li>
@@ -127,10 +124,10 @@
 
         {% for num in page_obj.paginator.page_range %}
           {% if page_obj.number == num %}
-            <li><strong>{{ num }}</strong></li>
+            <li><strong aria-current="page">{{ num }}</strong></li>
           {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
             <li>
-              <a href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.site %}&site={{ request.GET.site }}{% endif %}">
+              <a href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.site %}&site={{ request.GET.site }}{% endif %}" aria-label="الصفحة {{ num }}">
                 {{ num }}
               </a>
             </li>
@@ -139,22 +136,22 @@
 
         {% if page_obj.has_next %}
           <li>
-            <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.site %}&site={{ request.GET.site }}{% endif %}">
+            <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.site %}&site={{ request.GET.site }}{% endif %}" aria-label="الصفحة التالية">
               التالي ▶️
             </a>
           </li>
           <li>
-            <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.site %}&site={{ request.GET.site }}{% endif %}">
+            <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.site %}&site={{ request.GET.site }}{% endif %}" aria-label="الصفحة الأخيرة">
               ⏭️ الأخيرة
             </a>
           </li>
         {% endif %}
       </ul>
       
-      <div class="pagination-info">
+      <div class="pagination-info" aria-live="polite">
         صفحة {{ page_obj.number }} من {{ page_obj.paginator.num_pages }}
       </div>
-    </div>
+    </nav>
   {% endif %}
 </div>
 {% endblock %}

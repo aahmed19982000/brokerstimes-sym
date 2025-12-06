@@ -3,15 +3,27 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>{% block title %}نظام إدارة المهام{% endblock %}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  
   {% block extra_css %}{% endblock %}
 </head>
 <body>
 
   {% include 'includes/header.html' %}
+
+  <!-- حاوية رسائل النظام المعزولة -->
+  {% if messages %}
+  <div class="system-messages" role="status" aria-live="polite" aria-atomic="true">
+    {% for message in messages %}
+      <div class="message {{ message.tags }}">
+        <div class="message-text">{{ message }}</div>
+        <button type="button" class="close" aria-label="إغلاق" onclick="this.parentElement.style.display='none'">×</button>
+      </div>
+    {% endfor %}
+  </div>
+  {% endif %}
 
   <main>
     {% block content %}{% endblock %}
@@ -19,6 +31,24 @@
 
   <script src="{% static 'js/script.js' %}"></script>
   <script src="{% static 'js/notifications.js' %}"></script>
+
+  <!-- سلوك بسيط: إخفاء تلقائي للرسائل بعد 6 ثواني -->
+  <script>
+    (function(){
+      try {
+        const msgs = document.querySelectorAll('.system-messages .message');
+        msgs.forEach((el) => {
+          setTimeout(() => {
+            el.style.transition = 'opacity .4s, transform .4s';
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(-6px)';
+            setTimeout(()=> el.remove(), 450);
+          }, 6000);
+        });
+      } catch (e) { /* silent */ }
+    })();
+  </script>
+
   {% block extra_js %}{% endblock %}
 </body>
 </html>

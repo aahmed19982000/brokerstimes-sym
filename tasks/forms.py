@@ -1,8 +1,11 @@
 from django import forms
 from .models import Task
 from accounts.models import Users
+from ckeditor.widgets import CKEditorWidget  # استدعاء CKEditor
 
 class TaskForm(forms.ModelForm):
+    content = forms.CharField(widget=CKEditorWidget())  # استخدام CKEditor للحقل content
+
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
@@ -10,7 +13,7 @@ class TaskForm(forms.ModelForm):
 
         if user and user.role != 'manager':
             # الموظف العادي يعدل فقط الحقول المسموح بها
-            allowed_fields = ['image', 'image_type', 'image_details', 'article_link', 'status']
+            allowed_fields = ['image', 'image_type', 'image_details', 'article_link', 'status', 'content', 'original_article_url']
             for field in list(self.fields.keys()):
                 if field not in allowed_fields:
                     self.fields[field].widget = forms.HiddenInput()

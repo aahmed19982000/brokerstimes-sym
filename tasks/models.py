@@ -1,6 +1,8 @@
 from django.db import models
 from django.conf import settings
 from  categories.models import Site , Article_type_U_N ,Article_type_W_R_A_B
+from ckeditor.fields import RichTextField
+
 STATUS_CHOICES = [  ('in_progress', '⏳ جاري العمل'),
     ('upload', 'تم الرفع'),
     ('publish', 'تم النشر'),
@@ -28,6 +30,9 @@ class Task(models.Model):
     image_type=models.CharField(max_length=20,choices=TYPE_IMAGE,default='صورة بارزة',verbose_name='نوع الصورة', null=True, blank=True)
     image_details = models.TextField(verbose_name="تفاصيل الصور" , null=True, blank=True)
     image_status= models.CharField(max_length=20,choices=IMAGE_STATUS,default='in_progress',verbose_name='حالة الصورر', null=True, blank=True)
-
+    content = RichTextField()
+    original_article_url = models.URLField(blank=True, null=True, verbose_name="رابط المقال الأصلي")
     def __str__(self):
         return self.article_title
+
+
