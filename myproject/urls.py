@@ -30,6 +30,7 @@ urlpatterns = [
     path('accounts/login/', auth_views.LoginView.as_view(), name='login'),
     path('home/', include('home.urls')),
     path('categories/', include('categories.urls')),
+    path('companies/', include('companies.urls')),
 
 
 

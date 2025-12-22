@@ -45,3 +45,18 @@ class CustomHoliday(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.date}"
+    
+
+class contract_details(models.Model):
+    details = models.CharField(verbose_name="تفاصيل العقد")
+
+    def __str__(self):
+        return self.details[:50]  
+    
+
+class contract_duration(models.Model):
+    duration = models.CharField(max_length=100, verbose_name="مدة العقد")
+    number_of_duration = models.DecimalField(max_digits=4,decimal_places=2,verbose_name="رقم مدة العقد بالسنوات")
+
+    def __str__(self):
+        return self.duration

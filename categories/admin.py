@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Site, Article_type_U_N ,Article_type_W_R_A_B, Official_holiday, CustomHoliday
+from .models import Site, Article_type_U_N ,Article_type_W_R_A_B, Official_holiday, CustomHoliday, contract_details, contract_duration
 @admin.register(Site)
 class SiteAdmin(admin.ModelAdmin):
     list_display = ['name','number_of_days','start_date','site_link']
@@ -19,3 +19,11 @@ class Official_holidayAdmin(admin.ModelAdmin):
 @admin.register(CustomHoliday)
 class CustomHolidayAdmin(admin.ModelAdmin):
     list_display = ['user','reason','date']
+
+@admin.register(contract_details)
+class contract_detailsAdmin(admin.ModelAdmin):
+    list_display = ['details']
+
+@admin.register(contract_duration)
+class contract_durationAdmin(admin.ModelAdmin):
+    list_display = ['duration','number_of_duration']
