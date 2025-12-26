@@ -10,7 +10,7 @@ from categories.models import Site
 from django.urls import reverse
 from django.db.models import Q
 from django.core.paginator import Paginator
-
+from services.veryfction import url_form_sitemap_html
 
 def get_status_label(code):
     return {
@@ -200,9 +200,7 @@ def update_article_link(request, task_id):
     return redirect(previous_page)
 
 #وظيفة عرض المهمة بشكل منفصل 
-from django.shortcuts import render, redirect
-from .models import Task
-from .forms import TaskForm
+
 
 def task_details(request, task_id):
     task = get_object_or_404(Task, id=task_id)
@@ -349,3 +347,44 @@ def auto_update_tasks(keyword=None):
         else:
             print(f"[✘] Task {task.id} NOT found (score {result['score']})")
         
+
+def update_task_published_url(task_id, single_url=None):
+    """
+    لو اتبعت single_url، هيتعامل مع رابط واحد فقط بدل البحث في sitemap.
+    """
+    task = get_object_or_404(Task, id=task_id)
+    
+    if single_url:
+        # إضافة الرابط اللي جاي من المستخدم مباشرة
+        task.published_url = single_url
+        task.status = 'published'
+        task.save()
+        return True, [(single_url, None, 0)]  # نفس شكل القائمة القديمة
+    else:
+        if not task.publish_site or not task.publish_site.sitemaps_links:
+            return False, None
+
+        sitemap_urls = task.publish_site.sitemaps_links.strip().splitlines()
+        keyword = task.article_title
+
+        all_found_links = []
+
+        for sitemap_url in sitemap_urls:
+            found_links = url_form_sitemap_html(sitemap_url, keyword)
+            all_found_links.extend(found_links)
+
+        if all_found_links:
+            # إزالة التكرارات
+            seen = set()
+            unique_links = []
+            for link, anchor_text, match_count in all_found_links:
+                if link not in seen:
+                    unique_links.append((link, anchor_text, match_count))
+                    seen.add(link)
+
+            task.published_url = ','.join([link[0] for link in unique_links])
+            task.status = 'published'
+            task.save()
+            return True, unique_links
+        else:
+            return False, None

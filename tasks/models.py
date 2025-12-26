@@ -29,6 +29,8 @@ class Task(models.Model):
     image_type=models.CharField(max_length=20,choices=TYPE_IMAGE,default='صورة بارزة',verbose_name='نوع الصورة', null=True, blank=True)
     image_details = models.TextField(verbose_name="تفاصيل الصور" , null=True, blank=True)
     image_status= models.CharField(max_length=20,choices=IMAGE_STATUS,default='in_progress',verbose_name='حالة الصورر', null=True, blank=True)
+    published_url= models.CharField(max_length=7000, verbose_name="الرابط المنشور", blank=True, null=True)
+    
     def __str__(self):
         return self.article_title
 
