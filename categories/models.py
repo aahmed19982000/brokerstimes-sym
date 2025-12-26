@@ -7,7 +7,7 @@ class Site(models.Model):
     start_date = models.DateField(null=True, blank=True, verbose_name="تاريخ البدء")  
     number_of_days = models.PositiveIntegerField(verbose_name="عدد ايام الفارق")
     site_link = models.URLField(max_length=200, verbose_name="رابط الموقع")
-    sitemaps_links = models.TextField(verbose_name="روابط الـ sitemap", help_text="ضع كل رابط في سطر جديد")
+    sitemaps_links = models.URLField(verbose_name="روابط الـ sitemap", help_text="ضع كل رابط في سطر جديد")
    
 
 

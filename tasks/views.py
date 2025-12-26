@@ -333,8 +333,9 @@ def update_task_published_url(task_id):
     
     task = get_object_or_404(Task, id=task_id)
     url= url_form_sitemap_html(task.publish_site.sitemaps_links, task.article_title)
+    print("Found URLs:", url)
     if url:
-        task.published_url = url[0][0]  # أخذ أول رابط من النتائج
+        task.published_url = "\n\n".join(item[0] for item in url)
         task.status = 'publish'
         task.save()
     return task.published_url
