@@ -12,6 +12,9 @@ urlpatterns = [
 
     path('image_form/', views.image_to_Designer, name='image_form'),
     path("tasks/<int:task_id>/update_image_status/", views.update_image_status, name="update_image_status"),
+    
+
+    
 
 
 

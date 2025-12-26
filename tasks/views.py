@@ -327,64 +327,18 @@ def update_image_status(request, task_id):
     return redirect(request.META.get("HTTP_REFERER", "dashboard"))
 
 #وظيفة البحث عن الرابط المنشور من خلال صفحة 
-def auto_update_tasks(keyword=None):
-    tasks = Task.objects.filter(status="done")
-    print(f"عدد المهام قبل التحديث: {tasks.count()}")
-
-
-    for task in tasks:
-        # لو فيه كلمة محددة، نتأكد إنها موجودة في عنوان المقال
-        if keyword and keyword not in task.article_title:
-            continue  # نتجاوز المهمة لو الكلمة مش موجودة
-
-        result = check_if_task_published(task.article_title)
-
-        if result["found"]:
-            task.status = "published"
-            task.published_url = result["url"]
-            task.save()
-            print(f"[✔] Task {task.id} published at {result['url']} (score {result['score']})")
-        else:
-            print(f"[✘] Task {task.id} NOT found (score {result['score']})")
         
 
-def update_task_published_url(task_id, single_url=None):
-    """
-    لو اتبعت single_url، هيتعامل مع رابط واحد فقط بدل البحث في sitemap.
-    """
-    task = get_object_or_404(Task, id=task_id)
+def update_task_published_url(task_id):
     
-    if single_url:
-        # إضافة الرابط اللي جاي من المستخدم مباشرة
-        task.published_url = single_url
-        task.status = 'published'
+    task = get_object_or_404(Task, id=task_id)
+    url= url_form_sitemap_html(task.publish_site.sitemaps_links, task.article_title)
+    if url:
+        task.published_url = url[0][0]  # أخذ أول رابط من النتائج
+        task.status = 'publish'
         task.save()
-        return True, [(single_url, None, 0)]  # نفس شكل القائمة القديمة
-    else:
-        if not task.publish_site or not task.publish_site.sitemaps_links:
-            return False, None
+    return task.published_url
+    
+    
 
-        sitemap_urls = task.publish_site.sitemaps_links.strip().splitlines()
-        keyword = task.article_title
 
-        all_found_links = []
-
-        for sitemap_url in sitemap_urls:
-            found_links = url_form_sitemap_html(sitemap_url, keyword)
-            all_found_links.extend(found_links)
-
-        if all_found_links:
-            # إزالة التكرارات
-            seen = set()
-            unique_links = []
-            for link, anchor_text, match_count in all_found_links:
-                if link not in seen:
-                    unique_links.append((link, anchor_text, match_count))
-                    seen.add(link)
-
-            task.published_url = ','.join([link[0] for link in unique_links])
-            task.status = 'published'
-            task.save()
-            return True, unique_links
-        else:
-            return False, None
