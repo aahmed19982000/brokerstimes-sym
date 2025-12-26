@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
+
 
 def url_form_sitemap_html(sitemap_url, keyword):
     headers = {"User-Agent": "Mozilla/5.0"}
@@ -13,21 +14,31 @@ def url_form_sitemap_html(sitemap_url, keyword):
 
         soup = BeautifulSoup(read_sitemap.text, "html.parser")
 
+        # =========================
+        # معالجة keyword لو كان رابط
+        # =========================
+        if keyword.startswith("http"):
+            parsed = urlparse(keyword)
+            keyword = parsed.netloc or parsed.path
+            keyword = keyword.replace("www.", "")
+
+            for ext in [".com", ".net", ".org", ".io", ".co", ".ae", ".sa"]:
+                keyword = keyword.replace(ext, "")
+
         keyword_words = keyword.lower().split()
         min_match = 2 if len(keyword_words) > 2 else 1
 
         reslist = []
-        seen_links = set()  # هذي لتخزين الروابط اللي ظهرت مسبقًا
+        seen_links = set()
 
         for link in soup.find_all("a"):
             anchor_text = link.get_text(strip=True) or ""
             href = link.get("href")
             if not href:
-                continue  
+                continue
 
             full_href = urljoin(sitemap_url, href)
 
-            # منع التكرار
             if full_href in seen_links:
                 continue
             seen_links.add(full_href)
